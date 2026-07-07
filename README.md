@@ -26,5 +26,5 @@ Any unauthorized use of this intellectual property will be met with necessary le
 If you are interested in acquiring a commercial license, utilizing this research, or collaborating, you must obtain explicit written permission. Please contact the author directly:
 
 * **Author:** Anant Thakkur
-* **Email:** [Insert your email address here]
-* **LinkedIn:** [Insert your LinkedIn URL here]
+* **Email:** anantthakkur19@gmail.com
+* **LinkedIn:** https://www.linkedin.com/in/anant-thakkur-4b970437a/
