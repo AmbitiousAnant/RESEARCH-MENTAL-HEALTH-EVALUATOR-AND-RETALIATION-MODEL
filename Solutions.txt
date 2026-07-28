@@ -1,0 +1,27 @@
+SOLUTIONS TO 4TH PROBLEM IN(check problems in V2)
+"Zero-egress" is optional, not architectural. The shipped app has three modes: Cloud AI (the recommended default for general tasks, cloud-hosted), Private AI (actually on-device), and BYOK (sends data to OpenAI). The privacy guarantee only holds if a clinician remembers to manually select Private AI every session — this is a materially weaker guarantee than a single-mode, hard-constrained architecture.
+
+Sentinel have better privacy feature as it is almost edge AI application.
+
+
+**MindGuard**
+IRB-approved, 20-subject, 1–2 week live field deployment on real phones, with a subset of participants doing parallel sessions against a licensed MHFA counselor for direct comparison.
+Benchmarked against two large public datasets (PMData: 16 people/5 months; Globem: 497 people/4 years) and against GPT-4o, GPT-3.5, Claude-3.5, LLaMA3-70B, Qwen2-72B, and Mixtral-8×22B — with real accuracy/precision/recall/F1 numbers. Their 7B on-device model actually beats GPT-4o's F1 on the Globem dataset (0.748 vs 0.725).
+ 
+I CAN USE THEIR RESEARCH  TO IMRPOVE  FUNCTIONALITY OF SENTINEL TO GET BETTER UCONNECTION WITH USER AND MORE INDUSTRY READY INSIGHTS
+Their own user survey is genuinely useful evidence for your ethics section: 60% of participants still worried about data leakage even though processing was on-device. That's a citable data point that architecture alone doesn't solve trust — it supports your Section 5.5 emphasis on plain-language disclosure, not just technical privacy.
+
+
+LOOPHOLES IN MINDGUARD
+That said, real loopholes exist, and they're useful ones :
+
+1)Escalation reads as automated, not human-anchored: "If MindGuard detects a potential mental health risk, it will promptly notify professional mental health institutions." There's no described human review step before that notification fires — this is close to the exact design your own Section 3.5 explicitly considers and rejects.
+ADV:Sentinel CAN ESCALATE AND TAKE ACTION AUTOMATICALLY ON BASIS OF CONDITION
+
+2}Output is binary (at-risk / not-at-risk) with no calibrated uncertainty, despite real class imbalance (9.8% and 23.2% positive rates) and imperfect precision (0.79 and 0.64) — this is exactly the "false precision" problem your conformal-calibration layer exists to solve, and MindGuard doesn't touch it.
+ADV:Sentinels output is wil be  ternary(three stages) and will be more closer to user.
+
+3)It depends on a wearable (Fitbit) for its validated behavioral signal, not native phone telemetry — a real hardware/cost barrier your phone-only design avoids.
+ADV:Sentinel have way more parameters to validate its results.
+
+**MOPHES**
