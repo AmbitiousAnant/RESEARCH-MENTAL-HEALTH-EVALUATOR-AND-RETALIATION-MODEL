@@ -12,7 +12,6 @@ Solution:need to find.
  3)Keystroke dynamics. BiAffect — your own cited precedent — captures typing metadata by being the user's keyboard app. You cite the methodology but not the delivery mechanism, and it matters: capturing inter-key timing across other apps on Android means either (a) Sentinel becomes the default IME, which is a real adoption barrier (people rarely switch keyboards), or (b) an AccessibilityService, which Play Store policy restricts to genuine accessibility use cases and scrutinizes heavily for anything that looks like behavioral monitoring. This is worth a paragraph in Section 3.2 — right now it reads as if the data is just... available.
 Solution:need to find.
 
-
 4)Your related-work section is unusually thorough, but the specific niche of edge-LLM-for-mental-health has moved fast in just the last few months. I found several recent papers your intro's novelty claim ("no existing system combines...") doesn't address:
 
 "Toward Zero-Egress Psychiatric AI" (Bandara et al., arXiv:2604.18302, Apr 2026) — on-device LLM ensemble (including Gemma) for zero-egress psychiatric decision support. Different core approach (active diagnostic ensemble vs. your passive phenotyping + tiered escalation) and different context (military/correctional health vs. consumer), but close enough in framing that a reviewer will ask why it isn't cited.

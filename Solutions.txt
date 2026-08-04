@@ -25,3 +25,6 @@ ADV:Sentinels output is wil be  ternary(three stages) and will be more closer to
 ADV:Sentinel have way more parameters to validate its results.
 
 **MOPHES**
+
+
+cureently i would search for solutions avaiblae if any , if not then develop
