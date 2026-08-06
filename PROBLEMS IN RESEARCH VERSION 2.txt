@@ -10,7 +10,7 @@ Solution:need to find.
 
 
  3)Keystroke dynamics. BiAffect — your own cited precedent — captures typing metadata by being the user's keyboard app. You cite the methodology but not the delivery mechanism, and it matters: capturing inter-key timing across other apps on Android means either (a) Sentinel becomes the default IME, which is a real adoption barrier (people rarely switch keyboards), or (b) an AccessibilityService, which Play Store policy restricts to genuine accessibility use cases and scrutinizes heavily for anything that looks like behavioral monitoring. This is worth a paragraph in Section 3.2 — right now it reads as if the data is just... available.
-Solution:need to find.
+Solution:need to find .
 
 4)Your related-work section is unusually thorough, but the specific niche of edge-LLM-for-mental-health has moved fast in just the last few months. I found several recent papers your intro's novelty claim ("no existing system combines...") doesn't address:
 
@@ -28,3 +28,187 @@ Solution : after completing this preprint or prototype of this reseach paper i w
 
 **soon**
 7)Genuinely competitive for: arXiv preprint (do this soon, given the novelty-gap point above — it timestamps your contribution); undergraduate/student research symposia; workshop tracks that explicitly welcome position/vision papers (ML4H at NeurIPS, CHI or FAccT/AIES workshops on responsible AI in health, digital-health workshops); student paper competitions at ACM conferences.
+
+
+
+
+
+
+
+
+
+
+after researching more i found some insights that my project collides with midguard and promind llm and mophes , 2 of them uses wearable to get mental standards and i am thinking that i can also use their research insights for more bettterment of my sentinel project , I adeed their research papers in the project memory , take a look on  them and tell me which more beneficial knowledge i could use from them as they are well research and mind guard in used in daily world .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Fact-check: the three papers, and where Sentinel actually stands out
+
+Your instinct is right for two of the three. For the third — I need to push back a little, because getting this wrong would leave a hole in your related-work section that a reviewer will find in about ninety seconds.
+
+## Toward Zero-Egress Psychiatric AI (Bandara et al., arXiv:2604.18302, Apr 2026)
+
+**Real-world status: confirmed not deployed.** This one supports your claim cleanly. I pulled the full text.
+
+- The "proof-of-concept clinical deployment... in collaboration with McDonald Army Health Center" is explicitly listed under **Future Work** — it has not happened. There is no pilot, no patient data, no clinician usability result anywhere in the paper.
+- **No diagnostic accuracy is reported anywhere.** The abstract claims the on-device version "achieves diagnostic accuracy comparable to its server-side predecessor," but the only evaluation in the entire paper is a latency table — no sensitivity, specificity, F1, or agreement statistic for the actual diagnoses (depression, GAD, PTSD, bipolar, schizophrenia).
+- That latency table is thin: the numbers came from **one person visually watching one screen-recorded demo session** — the paper says so itself ("demo-observed estimates... single uncontrolled session... hardware specification of the test device is not documented"). Of the three-model ensemble, only the smallest Gemma variant has an actual timing number; Phi-3.5-mini and Qwen2 have none at all.
+- **"Zero-egress" is optional, not architectural.** The shipped app has three modes: Cloud AI (the *recommended default* for general tasks, cloud-hosted), Private AI (actually on-device), and BYOK (sends data to OpenAI). The privacy guarantee only holds if a clinician remembers to manually select Private AI every session — this is a materially weaker guarantee than a single-mode, hard-constrained architecture.
+- Their fine-tuning set for this on-device version is **500 records** (333 for training) covering five conditions including schizophrenia and bipolar disorder — thinner even than their own earlier cloud version, which used ~2,000 records with different base models entirely. The abstract's "comparable to its server-side predecessor" claim is being made across a 75% cut in training data and a full model swap, with zero numbers to back it up.
+- Worth knowing for your own citation hygiene: a large fraction of their reference list (roughly 9 of the ~15 most load-bearing citations) is the same author cluster citing their own other 2025–2026 preprints, none of which appear to be peer-reviewed yet either.
+
+## MindGuard (Ji et al., Caltech/UCLA, arXiv:2409.10064)
+
+**Real-world status: this one does NOT support "not close to real-world application."** I want to be straight with you here rather than just confirm what you're hoping to hear — this is the strongest of the three, and it's also the closest architectural relative to Sentinel, which matters more for you than the other two combined.
+
+- **IRB-approved, 20-subject, 1–2 week live field deployment** on real phones, with a subset of participants doing parallel sessions against a licensed MHFA counselor for direct comparison.
+- Benchmarked against two large public datasets (PMData: 16 people/5 months; Globem: 497 people/4 years) and against GPT-4o, GPT-3.5, Claude-3.5, LLaMA3-70B, Qwen2-72B, and Mixtral-8×22B — with real accuracy/precision/recall/F1 numbers. Their 7B on-device model actually **beats GPT-4o's F1 on the Globem dataset** (0.748 vs 0.725).
+- That said, real loopholes exist, and they're useful ones for you:
+  - Escalation reads as **automated, not human-anchored**: "If MindGuard detects a potential mental health risk, it will promptly notify professional mental health institutions." There's no described human review step before that notification fires — this is close to the exact design your own Section 3.5 explicitly considers and rejects.
+  - Output is **binary** (at-risk / not-at-risk) with no calibrated uncertainty, despite real class imbalance (9.8% and 23.2% positive rates) and imperfect precision (0.79 and 0.64) — this is exactly the "false precision" problem your conformal-calibration layer exists to solve, and MindGuard doesn't touch it.
+  - It depends on a **wearable** (Fitbit) for its validated behavioral signal, not native phone telemetry — a real hardware/cost barrier your phone-only design avoids.
+  - Their own user survey is genuinely useful evidence for *your* ethics section: **60% of participants still worried about data leakage even though processing was on-device.** That's a citable data point that architecture alone doesn't solve trust — it supports your Section 5.5 emphasis on plain-language disclosure, not just technical privacy.
+
+## MoPHES (Wei, Zhou, Wang, arXiv:2510.16085, Oct 2025)
+
+**Real-world status: confirmed not deployed.** Supports your claim.
+
+- Evaluation is **entirely offline** — automated benchmarks (BLEU/ROUGE, GPT-4.1-as-judge scoring on 5-point scales, a 200-sample labeled test set). No human user study, no field deployment, no IRB mentioned anywhere in the paper.
+- The ground truth for its central clinical claim (depression/anxiety severity) was generated by **prompting GPT-4o-mini to label the data** — not clinician diagnosis. The paper is honest about this ("these at-risk mental conditions were labeled based on users' text input instead of clinical diagnosis"), but it means their accuracy numbers measure agreement with another model's opinion, not real outcomes.
+- Results are genuinely mixed, not uniformly strong: MoPHES beats GPT-4.1 on anxiety accuracy (0.805 vs 0.695) but **loses to it on depression accuracy** (0.630 vs 0.750).
+- **Zero mention of suicide or self-harm risk anywhere in the paper.** For a system billed as delivering "professional treatment recommendations," this is a real gap — and it's precisely where your entire Tier 3 design lives.
+- It's purely conversational/self-report input — no passive behavioral sensing at all, despite their own related-work section explaining why objective signal matters.
+- One more thing worth flagging: their stated next step is Direct Preference Optimization to align the model with "user preferences." Trained naively, that's close to the exact mechanism your own citations (the sycophancy literature, EmoAgent) warn produces validating, harm-reinforcing outputs. Not a criticism of what they've built — just a risk in their stated roadmap you could note.
+
+## Where Sentinel is genuinely different
+
+| Dimension | Zero-Egress | MindGuard | MoPHES | Sentinel |
+|---|---|---|---|---|
+| Passive phone-native phenotyping | no (conversational) | yes, but wearable-dependent | no | yes, phone-only |
+| Privacy is architectural, not mode-selectable | no (Cloud/BYOK modes exist) | yes | yes | yes |
+| Calibrated uncertainty (not point accuracy) | no | no | no | **yes — nobody else here does this** |
+| Graduated, explicitly human-anchored escalation | n/a (clinician tool) | automated-sounding | none at all | **yes, explicit 3-tier** |
+| Coercive-control / misuse consideration | no | no | no | **yes** |
+| Real-world human validation | no (planned) | **yes** | no | no |
+
+So: yes, there's real uniqueness — the conformal-calibrated tiering, the hard single-mode privacy architecture, and the coercive-control mitigation are things none of these three papers do, and you can say so with a straight face. But two honest corrections to how you position this:
+
+1. **Don't write "none of these are close to real-world application" as a blanket claim.** MindGuard will make that sentence backfire — it's the one a reviewer is most likely to know, and it has the strongest empirical grounding of anything cited in your entire related-work section, including your own citations. Say specifically what's true: Zero-Egress and MoPHES haven't been deployed with real users; MindGuard has, but with a narrower binary risk model, wearable dependency, and an escalation path that skips the human check your design insists on.
+2. **Don't frame this as "these failed, mine will succeed."** Sentinel is also, right now, an unimplemented proposal — same stage as Zero-Egress and MoPHES, arguably an earlier stage than MindGuard. The defensible framing is "each of these establishes partial precedent and leaves a specific, identifiable gap; here's the gap and here's how Sentinel's architecture closes it" — which is exactly what the table above gives you, dimension by dimension.
+
+One more thing for completeness: my search also turned up **ProMind-LLM** (causal reasoning + sensor data, 2025) as a fourth adjacent paper in this exact niche. I didn't deep-dive it since you didn't name it, but if you want the related-work section to be airtight, it's worth a quick look before you finalize — this niche is filling up fast.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ProMind-LLM (Zheng, Ji, Sun, Chen, Gao, Srivastava — arXiv:2505.14038, May 2025)
+
+Before the fact-check itself: the most important thing I found isn't a loophole in the paper — it's who wrote it. **ProMind-LLM is from the same lab as MindGuard.** Check the author lists: Sijie Ji, Xinzhe Zheng, Jiawei Sun, Renqi Chen, Wei Gao, and Mani Srivastava (Caltech/UCLA) are on both papers, and ProMind-LLM's own reference list cites MindGuard as their own prior work — plus a third paper from the same group ("Transforming Mental Health Care with Autonomous LLM Agents at the Edge," ACM SenSys 2025). This isn't four independent research groups converging on the same idea — it's three: this Caltech/UCLA lab (MindGuard → ProMind-LLM → the SenSys demo), Zero-Egress's ODU/military-health cluster, and MoPHES's group. That distinction matters for how you frame your related-work section — citing MindGuard and ProMind-LLM as two separate confirmations of a research direction would overstate how independently validated this space actually is.
+
+## Real-world status: confirmed not deployed — and less validated than its own predecessor
+
+This supports your framing, with an interesting wrinkle: **ProMind-LLM is actually a step backward from MindGuard on real-world grounding**, even though it's the more methodologically sophisticated paper.
+
+- No field study, no live users, no IRB mentioned anywhere. MindGuard (the earlier paper from this same lab) ran a 20-person field deployment; ProMind-LLM drops that entirely and re-evaluates on the same two static datasets (PMData, Globem) MindGuard already used, just with a better training pipeline.
+- The paper says this about itself, explicitly, in its own Risk Assessment appendix: *"Although ProMind-LLM has been evaluated solely on public datasets, applying an LLM-based mental health risk assessment approach in real-world settings introduces potential ethical risks... ongoing validation, rigorous monitoring, and human oversight are critical."* That's about as direct a self-admission as you'll find.
+- Its own stated Limitations section adds: effectiveness "in real-world, uncontrolled environments with diverse populations, in terms of age, gender, and race, remains insufficiently validated," and that "a more comprehensive human evaluation is required."
+- What it calls "human evaluation" is domain experts reviewing model outputs on the existing dataset (50 correct + 50 incorrect cases for reasoning coherence, 100 misclassified cases for error-typing) — not a study involving actual app users. Worth citing precisely as that, not as a user study.
+
+## Loopholes and weaknesses
+
+- **Still loses to GPT-4o on both datasets, on the primary metric.** ProMind-LLM's own headline framing ("achieves a performance ranking second only to GPT-4o... matches the reasoning capabilities of SOTA GPT-4o") is technically true but generous. The actual numbers: F1 of 0.712 vs. GPT-4o's 0.800 on PMData, 0.765 vs. 0.783 on Globem. More concerning for a risk-flagging tool specifically: recall on PMData is 0.667 vs. GPT-4o's 0.821 — meaning it misses roughly a third of the true at-risk cases in the smaller dataset, a gap the paper doesn't foreground.
+- **No output safety layer at all.** The model is continuously pretrained on ~100K articles including explicit content on suicide (7,973 articles), schizophrenia, and bipolar disorder, and generates open-ended clinical-style markdown reports (see their own Figure 17 example) — but there's no described equivalent of an EmoGuard-style safeguard, a RAG constraint to a validated instrument, or any independent verification step before that output reaches a user. It's a materially more open generation surface than your Tier-1 design, with materially less guardrailing.
+- **No escalation mechanism at all.** The output includes a YES/NO "needs professional support" tag (Figure 16), but nothing in the paper describes who sees that flag, whether a human reviews it, or what happens next. This is a bigger gap than even MindGuard, which at least states an (automated-sounding) notification step.
+- **Same thin, imbalanced evaluation base as MindGuard** — 16-person and 497-person datasets, 9.8%/23.2% positive rates, binary classification, no calibrated uncertainty despite the imbalance. The causal-CoT and self-refine contributions are real methodological advances, but they're being validated on the same narrow foundation, not a broader one.
+- Binary G=0/G=1 output only — same conformal-calibration gap as all three of the previous papers.
+
+## To be fair, genuine strengths worth acknowledging
+
+- Their label quality is a cut above MoPHES: "licensed psychological experts review the initial assessments and refine the labels" for both datasets — real clinician involvement, not just an LLM labeling another LLM's ground truth.
+- Real institutional backing (NIH grant #P41EB028242, Heritage Medical Research Institute), and the paper is written in ACL conference format (has the mandatory Limitations and Ethics Statement sections), suggesting a submission to an NLP venue — though I couldn't confirm acceptance anywhere, so treat it as an arXiv preprint for citation purposes until you verify otherwise.
+- The mobile/edge latency numbers are at least measured properly (not eyeballed off a screen recording like Zero-Egress): 5–7 tokens/sec decode on iPhone 14/15 Pro via MLC-LLM, benchmarked against human speech rate (~3.8 syllables/sec) as the usability bar — legitimate methodology, even if the throughput itself is modest.
+
+## Updated picture
+	
+| Dimension | Zero-Egress | MindGuard | MoPHES | ProMind-LLM | Sentinel |
+|---|---|---|---|---|---|
+| Same lab as another entry | no | yes (→ ProMind-LLM) | no | yes (← MindGuard) | no |
+| Passive phone-native phenotyping | no | wearable-dependent | no | wearable-dependent | yes, phone-only |
+| Hard architectural zero-egress | no (optional modes) | yes | yes | yes | yes |
+| Calibrated uncertainty | no | no | no | no | **yes** |
+| Output safety/guardrail layer | partial (2 layers, unvalidated) | not described | not described | **none described** | yes (RAG + EmoGuard-style) |
+| Explicit human-anchored escalation | n/a (clinician tool) | automated-sounding | none | none | **yes, explicit 3-tier** |
+| Real-world human validation | no (planned) | yes (20 users, IRB) | no | **no — less than its own predecessor** | no |
+
+## What this means for your uniqueness claim
+
+It holds up, and ProMind-LLM actually strengthens your argument rather than weakening it — a more sophisticated model on the same unvalidated, guardrail-free, un-escalated foundation is still a foundation without calibration or human-anchored escalation. But two adjustments to how you write this up:
+
+1. **Cite MindGuard and ProMind-LLM as one lineage, not two data points.** Say so explicitly — "the same research group's MindGuard and its successor ProMind-LLM" — rather than letting it read like independent convergent validation. A reviewer who catches the shared authorship after you implied otherwise will read the rest of your related-work section more skeptically.
+2. **The sharpest, most defensible line you can write now**: none of these four systems — across three independent research efforts — implements calibrated uncertainty or a fully human-anchored, non-automated escalation path, despite two of them (MindGuard, ProMind-LLM) having real accuracy numbers to report. That's a precise, evidenced claim, not a hand-wave, and it survives contact with the strongest paper in the set.
+
+
+
+Mindguard by Sword Health insights
+While checking for a code release, I found that "MindGuard" is also the name of a completely unrelated, real, open-source system released by Sword Health (a digital health company) in February 2026. Different organization, different paper, different purpose — do not cite these as the same thing.
+
+Sword Health's MindGuard is a family of lightweight safety classifiers (4B and 8B) built with licensed clinical psychologists to distinguish therapeutic disclosure ("I had a panic attack last year") from genuine clinical crisis in conversational text — reporting up to 0.982 AUROC and a 2–26× reduction in false positives over general-purpose safety classifiers at high-recall settings. They've open-sourced the model, the risk taxonomy, the evaluation dataset (swordhealth/MindGuard-testset on HuggingFace, 1,134 annotated turns), and a red-teaming framework. The dataset is under CC-BY-NC-SA-4.0 — non-commercial and share-alike, which is fine for an academic research paper like yours, but check the model weights' specific license terms before you build anything on it, since I only directly confirmed the license for the dataset.
+
+Here's why this actually matters for you, beyond just avoiding a citation error: this is a genuinely strong candidate for the "EmoGuard-style safeguard layer" your own Section 3.3 already calls for. Your paper currently cites EmoAgent's EmoGuard concept but doesn't point to an existing, validated implementation of that verification step. Sword Health's MindGuard is functionally close to what you need there — a classifier that sits between generated output and the user, specifically trained to tell supportive/therapeutic content apart from actual risk signal. Worth reading properly and potentially citing as a concrete precedent for that specific piece of your architecture, separate from the phenotyping comparison you've built against the Caltech/UCLA paper. If you want the citation:
+
+@misc{mindguardguard, title={MindGuard: Guardrail Classifiers for Multi-Turn Mental Health Support}, author={António Farinhas and Nuno M. [et al.]}}
+
+(I'd verify the full author list directly from Sword Health's site or the HuggingFace dataset card before using this — what I have is partial.)
+
+
+
+
+I can convert the data gathered from different parameters in such a descriptive way so that it can be ingested by sword healths mind guard and can be used to set a parameter for output and a parameter for RAG as it is only and majorly based on conversations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
