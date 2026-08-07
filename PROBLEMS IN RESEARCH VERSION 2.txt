@@ -198,6 +198,25 @@ I can convert the data gathered from different parameters in such a descriptive 
 
 
 
+Let's slow down on one word first, because it changes everything that follows: "gist." What exactly is generating that gist, and from what data?
+
+Your own paper is actually precise about this, and the precision matters here. It describes two separate signals, deliberately kept apart:
+
+BiAffect-style keystroke dynamics — inter-key timing, backspace rate, session duration — is explicitly described as "capturing metadata about how a person types rather than what they type." That's not an incidental detail, it's the entire point of choosing that method: it's a content-blind signal, chosen specifically because it doesn't require reading message text at all. There is no "gist" available from this stream. Structurally, it cannot tell you what someone wrote — only how fast, how erratically, and with how many corrections.
+MobileBERT sentiment does look at text content, but nothing in your design currently specifies capturing text beyond whatever the user types into Sentinel's own interface.
+
+So "from keyboard I can get a gist of user's conversation" isn't actually true of what your paper currently describes. It'd be true only if Sentinel expanded to reading typed content system-wide — across messaging apps, notes, everywhere the user types — which is a different and much bigger proposal than what's on the page right now. I want to flag why that matters before getting to MindGuard at all:
+
+If "gist of conversation" means texts to other people, that's not just a technical scope change — it's an ethical one. The moment Sentinel reads the gist of what a user is typing to someone else, you're now processing that other person's side of a conversation too, and they never consented to anything — they don't know Sentinel exists. This is uncomfortably close in shape to exactly the feature category your own Section 5.6 warns about (Freed et al., coercive control via "protective" monitoring features) — the difference between "an abusive partner repurposes a safety feature" and "the feature itself reads private conversations by design" is smaller than it looks. Your current design avoids this entirely by staying with the user's own behavioral patterns and a self-directed check-in dialogue. I'd be careful about giving that up for a feature gain, and if you do want to explore it, it needs its own dedicated treatment in Section 5, not to arrive as a side effect of a MindGuard integration.
+
+Separately — even with real text, a "gist" specifically breaks the thing that makes MindGuard good. You said it yourself: MindGuard's classification is strong. It's strong because it was trained to catch exactly the fine-grained stuff a summary throws away — tense ("I thought about it last year" vs. "I'm thinking about it now"), protective-factor hedging ("but I'd never actually do it"), metaphor vs. literal language. A gist, by definition, compresses that away. Feed it a summary instead of the verbatim turn, and you've handed it input that's easier to misread, not harder — you'd be weakening the exact strength you're trying to borrow.
+
+So here's the actual fork, and it matters which one you mean:
+
+If "keyboard data" means the actual typed exchange in Sentinel's own Tier-1 check-in with Gemma 4 — the real words the user types when Gemma asks how they're doing — then yes, this works, no gisting needed, no scope expansion needed. Feed MindGuard the verbatim turns from that conversation directly. This is exactly what I recommended last time, and it's already inside your existing design.
+If "keyboard data" means broader typing capture across the phone — that's a materially different, materially riskier system than the one you've designed, and I'd want you to make that choice deliberately and write the ethics section for it, not back into it because MindGuard happens to be good at classifying text.
+
+My honest read: you already have the sound version sitting in your own architecture. I'd build that — real EMA turns, straight into MindGuard, no synthesis step in between — rather than reaching for a broader capture mechanism to feed it. Want me to sketch what that pipeline actually looks like end to end (Gemma generates the check-in prompt → user responds → MindGuard classifies the turn → result gates what happens next)?
 
 
 
