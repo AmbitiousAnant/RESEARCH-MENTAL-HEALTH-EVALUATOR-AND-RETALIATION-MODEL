@@ -1,0 +1,12 @@
+# Real StudentLife data is fetched on demand (see scripts/fetch_real_data.sh),
+# not committed -- see README's "Data provenance & redistribution" section
+# for why.
+real_data/
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Generated output, not source -- regenerate by running the scripts
+*.png
+!README_assets/*.png
